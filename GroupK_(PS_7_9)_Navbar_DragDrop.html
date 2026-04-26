@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group K – Navbar & Drag Drop</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; }
+
+    /* ══ RESPONSIVE NAVBAR WITH DROPDOWN (PS 7) ══ */
+    nav { background: #1a1a2e; padding: 0 24px; position: relative; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { color: white; font-size: 18px; font-weight: bold; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: white; border-radius: 2px; }
+    .nav-links { display: flex; list-style: none; gap: 4px; }
+    .nav-links li { position: relative; }
+    .nav-links li a { color: #ccc; text-decoration: none; padding: 18px 14px; display: block; font-size: 14px; }
+    .nav-links li a:hover { color: white; background: rgba(255,255,255,0.08); }
+    /* DROPDOWN */
+    .nav-links li .dropdown { display: none; position: absolute; top: 100%; left: 0; background: #2a2a3e; min-width: 160px; border-radius: 0 0 8px 8px; z-index: 100; }
+    .nav-links li:hover .dropdown { display: block; }
+    .dropdown a { color: #bbb !important; padding: 10px 16px !important; font-size: 13px !important; }
+    .dropdown a:hover { background: rgba(255,255,255,0.1) !important; color: white !important; }
+    /* MOBILE */
+    @media (max-width: 640px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 56px; left: 0; right: 0; background: #1a1a2e; padding: 8px 0; z-index: 200; }
+      .nav-links.open { display: flex; }
+      .nav-links li .dropdown { position: static; display: none !important; }
+      .nav-links li:hover .dropdown { display: none !important; }
+    }
+
+    /* ══ DRAG AND DROP LIST (PS 9) ══ */
+    .section { padding: 30px; max-width: 500px; margin: auto; }
+    h2 { color: #1a1a2e; margin-bottom: 8px; }
+    .subtitle { color: #888; font-size: 13px; margin-bottom: 20px; }
+    .drag-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .drag-item { display: flex; align-items: center; gap: 12px; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 14px 16px; cursor: grab; user-select: none; transition: box-shadow 0.2s, opacity 0.2s; }
+    .drag-item:active { cursor: grabbing; }
+    .drag-item.dragging { opacity: 0.4; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .drag-item.over { border: 2px dashed #6366f1; background: #EEEDFE; }
+    .drag-handle { color: #aaa; font-size: 18px; cursor: grab; }
+    .drag-number { width: 24px; height: 24px; background: #6366f1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; flex-shrink: 0; }
+    .drag-text { font-size: 14px; font-weight: 500; color: #1a1a2e; flex: 1; }
+    .drag-tag { font-size: 11px; background: #f3f4f6; color: #666; border-radius: 20px; padding: 2px 8px; }
+    .tip { text-align: center; font-size: 12px; color: #aaa; margin-top: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SECTION 1: RESPONSIVE NAVBAR WITH DROPDOWN (PS 7) ══ -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">MyApp</div>
+    <button class="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">Home</a></li>
+      <li>
+        <a href="#">Courses ▾</a>
+        <!-- DROPDOWN MENU -->
+        <div class="dropdown">
+          <a href="#">HTML & CSS</a>
+          <a href="#">JavaScript</a>
+          <a href="#">Python Flask</a>
+          <a href="#">MongoDB</a>
+        </div>
+      </li>
+      <li><a href="#">Projects</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ══ SECTION 2: DRAG AND DROP LIST (PS 9) ══ -->
+<div class="section">
+  <h2>Drag & Drop List</h2>
+  <p class="subtitle">Drag items to reorder them</p>
+
+  <ul class="drag-list" id="dragList">
+    <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span><span class="drag-number">1</span><span class="drag-text">Learn HTML Basics</span><span class="drag-tag">HTML</span></li>
+    <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span><span class="drag-number">2</span><span class="drag-text">Style with CSS</span><span class="drag-tag">CSS</span></li>
+    <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span><span class="drag-number">3</span><span class="drag-text">Add JavaScript</span><span class="drag-tag">JS</span></li>
+    <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span><span class="drag-number">4</span><span class="drag-text">Setup Flask Backend</span><span class="drag-tag">Flask</span></li>
+    <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span><span class="drag-number">5</span><span class="drag-text">Connect MongoDB</span><span class="drag-tag">DB</span></li>
+    <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span><span class="drag-number">6</span><span class="drag-text">Deploy the App</span><span class="drag-tag">Deploy</span></li>
+  </ul>
+  <p class="tip">⠿ Drag the handle to reorder items</p>
+</div>
+
+<script>
+  // ══ HAMBURGER MENU ══
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  // ══ DRAG AND DROP ══
+  const list = document.getElementById('dragList');
+  let draggedItem = null;
+
+  // When drag starts — remember which item is being dragged
+  list.addEventListener('dragstart', (e) => {
+    draggedItem = e.target.closest('.drag-item');
+    setTimeout(() => draggedItem.classList.add('dragging'), 0);
+  });
+
+  // When drag ends — clean up
+  list.addEventListener('dragend', () => {
+    draggedItem.classList.remove('dragging');
+    document.querySelectorAll('.drag-item').forEach(i => i.classList.remove('over'));
+    draggedItem = null;
+    updateNumbers(); // Update numbers after reorder
+  });
+
+  // When dragging over another item
+  list.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const target = e.target.closest('.drag-item');
+    if (target && target !== draggedItem) {
+      document.querySelectorAll('.drag-item').forEach(i => i.classList.remove('over'));
+      target.classList.add('over');
+    }
+  });
+
+  // When dropped on another item — insert before or after
+  list.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const target = e.target.closest('.drag-item');
+    if (target && target !== draggedItem) {
+      const items = [...list.querySelectorAll('.drag-item')];
+      const dragIndex = items.indexOf(draggedItem);
+      const targetIndex = items.indexOf(target);
+      // Insert before or after based on position
+      if (dragIndex < targetIndex) {
+        list.insertBefore(draggedItem, target.nextSibling);
+      } else {
+        list.insertBefore(draggedItem, target);
+      }
+    }
+  });
+
+  // Update the number badges after reorder
+  function updateNumbers() {
+    document.querySelectorAll('.drag-number').forEach((num, i) => {
+      num.textContent = i + 1;
+    });
+  }
+</script>
+</body>
+</html>

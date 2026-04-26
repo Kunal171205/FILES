@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group F – Image Gallery</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 30px; }
+    h2 { text-align: center; margin-bottom: 20px; color: #1a1a2e; }
+
+    /* FILTER BUTTONS */
+    .filter-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-btn { padding: 7px 18px; border: 1px solid #6366f1; border-radius: 20px; background: white; color: #6366f1; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; }
+
+    /* GALLERY GRID */
+    .gallery { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+    .gallery-item { position: relative; width: 200px; height: 160px; border-radius: 10px; overflow: hidden; cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; display: block; }
+    .gallery-item:hover img { transform: scale(1.1); }
+
+    /* HOVER OVERLAY */
+    .overlay { position: absolute; inset: 0; background: rgba(26, 26, 46, 0.75); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; padding: 10px; text-align: center; }
+    .gallery-item:hover .overlay { opacity: 1; }
+    .overlay .cat-tag { font-size: 11px; background: #6366f1; border-radius: 20px; padding: 2px 10px; margin-bottom: 6px; }
+    .overlay p { font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<h2>Photo Gallery with Category Filter</h2>
+
+<div class="filter-row">
+  <button class="filter-btn active" onclick="filterGallery('all', this)">All</button>
+  <button class="filter-btn" onclick="filterGallery('nature', this)">Nature</button>
+  <button class="filter-btn" onclick="filterGallery('city', this)">City</button>
+  <button class="filter-btn" onclick="filterGallery('people', this)">People</button>
+  <button class="filter-btn" onclick="filterGallery('tech', this)">Tech</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<script>
+  // ── DATA: each image has a category ──
+  const images = [
+    { src: 'https://picsum.photos/400/320?random=10', category: 'nature', title: 'Green Forest', caption: 'Beautiful nature' },
+    { src: 'https://picsum.photos/400/320?random=20', category: 'city', title: 'City Lights', caption: 'Urban nightscape' },
+    { src: 'https://picsum.photos/400/320?random=30', category: 'people', title: 'Portraits', caption: 'People around us' },
+    { src: 'https://picsum.photos/400/320?random=40', category: 'tech', title: 'Technology', caption: 'Modern gadgets' },
+    { src: 'https://picsum.photos/400/320?random=50', category: 'nature', title: 'Mountains', caption: 'Snowy peaks' },
+    { src: 'https://picsum.photos/400/320?random=60', category: 'city', title: 'Streets', caption: 'Busy streets' },
+    { src: 'https://picsum.photos/400/320?random=70', category: 'tech', title: 'Laptop Setup', caption: 'Developer desk' },
+    { src: 'https://picsum.photos/400/320?random=80', category: 'people', title: 'Smiles', caption: 'Happy moments' },
+    { src: 'https://picsum.photos/400/320?random=90', category: 'nature', title: 'Ocean', caption: 'Calm waters' },
+  ];
+
+  // ── RENDER GALLERY ──
+  function renderGallery(filter) {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+    images
+      .filter(img => filter === 'all' || img.category === filter)
+      .forEach(img => {
+        gallery.innerHTML += `
+          <div class="gallery-item">
+            <img src="${img.src}" alt="${img.title}">
+            <div class="overlay">
+              <span class="cat-tag">${img.category}</span>
+              <strong>${img.title}</strong>
+              <p>${img.caption}</p>
+            </div>
+          </div>`;
+      });
+  }
+
+  // ── FILTER FUNCTION ──
+  function filterGallery(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGallery(category);
+  }
+
+  renderGallery('all'); // Load all on start
+</script>
+</body>
+</html>

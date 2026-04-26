@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group B – Live Input → DOM Update</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 30px; }
+    h2 { text-align: center; margin-bottom: 20px; color: #1a1a2e; }
+    section { background: white; border-radius: 10px; padding: 24px; margin-bottom: 30px; }
+
+    /* Search filter */
+    input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 14px; font-size: 14px; outline: none; }
+    input:focus { border-color: #6366f1; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 14px; border: 1px solid #ddd; text-align: left; }
+    thead tr { background: #1a1a2e; color: white; }
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+
+    /* Profile previewer */
+    .preview-form { display: flex; gap: 24px; flex-wrap: wrap; }
+    .form-group { flex: 1; min-width: 200px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #555; }
+    .form-group input { width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
+    .form-group input:focus { border-color: #6366f1; }
+    .profile-card { background: #1a1a2e; color: white; border-radius: 10px; padding: 20px; margin-top: 16px; display: flex; align-items: center; gap: 16px; }
+    .avatar { width: 60px; height: 60px; border-radius: 50%; background: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; flex-shrink: 0; }
+    #preview-name { font-size: 18px; font-weight: bold; }
+    #preview-role { font-size: 13px; color: #aaa; margin-top: 3px; }
+
+    /* Category filter */
+    .filter-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-btn { padding: 7px 16px; border: 1px solid #6366f1; border-radius: 20px; background: white; color: #6366f1; cursor: pointer; font-size: 13px; }
+    .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; }
+    .products { display: flex; flex-wrap: wrap; gap: 12px; }
+    .product-card { border: 1px solid #ddd; border-radius: 8px; padding: 14px; width: 140px; text-align: center; }
+    .product-card .cat { font-size: 11px; background: #EEEDFE; color: #3C3489; border-radius: 20px; padding: 2px 8px; margin-bottom: 6px; display: inline-block; }
+    .product-card .name { font-weight: bold; font-size: 14px; }
+    .product-card .price { color: #6366f1; font-size: 13px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SECTION 1: SEARCH / FILTER TABLE (PS 1, PS 17) ══ -->
+<h2>Search Filter — HTML Tags Glossary</h2>
+<section>
+  <input type="text" id="searchInput" placeholder="Type to search tags..." oninput="filterTable()">
+  <table id="glossaryTable">
+    <thead><tr><th>Tag</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>&lt;h1&gt;</td><td>Largest heading tag</td></tr>
+      <tr><td>&lt;p&gt;</td><td>Paragraph of text</td></tr>
+      <tr><td>&lt;a&gt;</td><td>Anchor tag for links</td></tr>
+      <tr><td>&lt;img&gt;</td><td>Displays an image</td></tr>
+      <tr><td>&lt;div&gt;</td><td>Block container element</td></tr>
+      <tr><td>&lt;span&gt;</td><td>Inline container element</td></tr>
+      <tr><td>&lt;table&gt;</td><td>Creates a data table</td></tr>
+      <tr><td>&lt;form&gt;</td><td>Input form container</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══ SECTION 2: REAL-TIME PROFILE PREVIEWER (PS 4) ══ -->
+<h2>Real-Time Profile Previewer</h2>
+<section>
+  <div class="preview-form">
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="nameInput" placeholder="Enter your name" oninput="updatePreview()">
+    </div>
+    <div class="form-group">
+      <label>Role / Title</label>
+      <input type="text" id="roleInput" placeholder="e.g. Web Developer" oninput="updatePreview()">
+    </div>
+  </div>
+  <div class="profile-card">
+    <div class="avatar" id="preview-avatar">?</div>
+    <div>
+      <div id="preview-name">Your Name</div>
+      <div id="preview-role">Your Role</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 3: CATEGORY FILTER PRODUCTS (PS 17) ══ -->
+<h2>Product Category Filter</h2>
+<section>
+  <div class="filter-btns">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
+    <button class="filter-btn" onclick="filterProducts('electronics', this)">Electronics</button>
+    <button class="filter-btn" onclick="filterProducts('clothing', this)">Clothing</button>
+    <button class="filter-btn" onclick="filterProducts('books', this)">Books</button>
+  </div>
+  <div class="products" id="productGrid"></div>
+</section>
+
+<script>
+  // ── SEARCH FILTER ──
+  function filterTable() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#glossaryTable tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(query) ? '' : 'none';
+    });
+  }
+
+  // ── PROFILE PREVIEWER ──
+  function updatePreview() {
+    const name = document.getElementById('nameInput').value || 'Your Name';
+    const role = document.getElementById('roleInput').value || 'Your Role';
+    document.getElementById('preview-name').textContent = name;
+    document.getElementById('preview-role').textContent = role;
+    document.getElementById('preview-avatar').textContent = name.charAt(0).toUpperCase() || '?';
+  }
+
+  // ── PRODUCT FILTER ──
+  const products = [
+    { name: 'Laptop', category: 'electronics', price: '₹45,000' },
+    { name: 'Phone', category: 'electronics', price: '₹15,000' },
+    { name: 'T-Shirt', category: 'clothing', price: '₹499' },
+    { name: 'Jeans', category: 'clothing', price: '₹999' },
+    { name: 'JS Book', category: 'books', price: '₹350' },
+    { name: 'Python Book', category: 'books', price: '₹400' },
+  ];
+
+  function renderProducts(filter) {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = '';
+    products
+      .filter(p => filter === 'all' || p.category === filter)
+      .forEach(p => {
+        grid.innerHTML += `
+          <div class="product-card">
+            <span class="cat">${p.category}</span>
+            <div class="name">${p.name}</div>
+            <div class="price">${p.price}</div>
+          </div>`;
+      });
+  }
+
+  function filterProducts(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(category);
+  }
+
+  renderProducts('all'); // Load all on start
+</script>
+</body>
+</html>

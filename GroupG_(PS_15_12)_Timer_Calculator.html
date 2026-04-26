@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group G – Timer & Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 30px; }
+    h2 { text-align: center; margin-bottom: 20px; color: #1a1a2e; }
+    section { background: white; border-radius: 10px; padding: 28px; margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+    /* STOPWATCH */
+    .timer-display { font-size: 56px; font-weight: bold; text-align: center; color: #1a1a2e; font-family: monospace; letter-spacing: 4px; margin-bottom: 24px; }
+    .timer-btns { display: flex; gap: 12px; justify-content: center; }
+    .timer-btns button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: bold; }
+    #startBtn { background: #22c55e; color: white; }
+    #stopBtn { background: #ef4444; color: white; }
+    #resetBtn { background: #6b7280; color: white; }
+    #startBtn:hover { background: #16a34a; }
+    #stopBtn:hover { background: #dc2626; }
+    #resetBtn:hover { background: #4b5563; }
+
+    /* CALCULATOR */
+    .calc-display { background: #1a1a2e; color: white; text-align: right; padding: 14px 16px; border-radius: 8px; margin-bottom: 10px; }
+    .calc-display #calc-expr { font-size: 13px; color: #888; min-height: 18px; }
+    .calc-display #calc-screen { font-size: 36px; font-weight: bold; word-break: break-all; }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .calc-btn { padding: 16px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: opacity 0.1s; }
+    .calc-btn:hover { opacity: 0.85; }
+    .btn-num { background: #f3f4f6; color: #1a1a2e; }
+    .btn-op { background: #EEEDFE; color: #3C3489; }
+    .btn-eq { background: #6366f1; color: white; grid-column: span 2; }
+    .btn-clear { background: #FAECE7; color: #712B13; }
+    .btn-zero { grid-column: span 2; }
+  </style>
+</head>
+<body>
+
+<!-- ══ STOPWATCH (PS 15) ══ -->
+<h2>Stopwatch</h2>
+<section>
+  <div class="timer-display" id="display">00:00:00</div>
+  <div class="timer-btns">
+    <button id="startBtn" onclick="startTimer()">Start</button>
+    <button id="stopBtn" onclick="stopTimer()">Stop</button>
+    <button id="resetBtn" onclick="resetTimer()">Reset</button>
+  </div>
+</section>
+
+<!-- ══ CALCULATOR (PS 12) ══ -->
+<h2>Basic Calculator</h2>
+<section>
+  <div class="calc-display">
+    <div id="calc-expr"></div>
+    <div id="calc-screen">0</div>
+  </div>
+  <div class="calc-grid">
+    <button class="calc-btn btn-clear" onclick="clearCalc()">AC</button>
+    <button class="calc-btn btn-op" onclick="inputOp('±')">±</button>
+    <button class="calc-btn btn-op" onclick="inputOp('%')">%</button>
+    <button class="calc-btn btn-op" onclick="inputOp('/')">÷</button>
+
+    <button class="calc-btn btn-num" onclick="inputNum('7')">7</button>
+    <button class="calc-btn btn-num" onclick="inputNum('8')">8</button>
+    <button class="calc-btn btn-num" onclick="inputNum('9')">9</button>
+    <button class="calc-btn btn-op" onclick="inputOp('*')">×</button>
+
+    <button class="calc-btn btn-num" onclick="inputNum('4')">4</button>
+    <button class="calc-btn btn-num" onclick="inputNum('5')">5</button>
+    <button class="calc-btn btn-num" onclick="inputNum('6')">6</button>
+    <button class="calc-btn btn-op" onclick="inputOp('-')">−</button>
+
+    <button class="calc-btn btn-num" onclick="inputNum('1')">1</button>
+    <button class="calc-btn btn-num" onclick="inputNum('2')">2</button>
+    <button class="calc-btn btn-num" onclick="inputNum('3')">3</button>
+    <button class="calc-btn btn-op" onclick="inputOp('+')">+</button>
+
+    <button class="calc-btn btn-num btn-zero" onclick="inputNum('0')">0</button>
+    <button class="calc-btn btn-num" onclick="inputDot()">.</button>
+    <button class="calc-btn btn-eq" onclick="calculate()">=</button>
+  </div>
+</section>
+
+<script>
+  // ══════════════════════════════════════
+  // STOPWATCH
+  // ══════════════════════════════════════
+  let seconds = 0;
+  let intervalId = null;
+
+  function startTimer() {
+    if (intervalId) return; // Already running
+    intervalId = setInterval(() => {
+      seconds++;
+      updateDisplay();
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+
+  function resetTimer() {
+    stopTimer();
+    seconds = 0;
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+    const secs = String(seconds % 60).padStart(2, '0');
+    document.getElementById('display').textContent = `${hrs}:${mins}:${secs}`;
+  }
+
+  // ══════════════════════════════════════
+  // CALCULATOR
+  // ══════════════════════════════════════
+  let current = '0';
+  let operator = null;
+  let previous = null;
+  let shouldReset = false;
+
+  function updateScreen() {
+    document.getElementById('calc-screen').textContent = current;
+  }
+
+  function inputNum(num) {
+    if (shouldReset) { current = '0'; shouldReset = false; }
+    current = current === '0' ? num : current + num;
+    updateScreen();
+  }
+
+  function inputDot() {
+    if (shouldReset) { current = '0'; shouldReset = false; }
+    if (!current.includes('.')) current += '.';
+    updateScreen();
+  }
+
+  function inputOp(op) {
+    if (op === '±') { current = String(-parseFloat(current)); updateScreen(); return; }
+    if (op === '%') { current = String(parseFloat(current) / 100); updateScreen(); return; }
+    if (previous !== null && !shouldReset) calculate();
+    previous = current;
+    operator = op;
+    shouldReset = true;
+    document.getElementById('calc-expr').textContent = `${previous} ${op === '*' ? '×' : op === '/' ? '÷' : op}`;
+  }
+
+  function calculate() {
+    if (!operator || previous === null) return;
+    const a = parseFloat(previous);
+    const b = parseFloat(current);
+    let result;
+    if (operator === '+') result = a + b;
+    else if (operator === '-') result = a - b;
+    else if (operator === '*') result = a * b;
+    else if (operator === '/') result = b !== 0 ? a / b : 'Error';
+    document.getElementById('calc-expr').textContent = `${previous} ${operator} ${current} =`;
+    current = String(result);
+    operator = null;
+    previous = null;
+    shouldReset = true;
+    updateScreen();
+  }
+
+  function clearCalc() {
+    current = '0';
+    operator = null;
+    previous = null;
+    shouldReset = false;
+    document.getElementById('calc-expr').textContent = '';
+    updateScreen();
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group E – HTML + CSS Layout</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; }
+
+    /* ── NAV ── */
+    nav { background: #1a1a2e; padding: 14px 30px; display: flex; justify-content: space-between; align-items: center; }
+    nav .logo { color: white; font-size: 18px; font-weight: bold; }
+    nav ul { list-style: none; display: flex; gap: 20px; }
+    nav ul li a { color: #aaa; text-decoration: none; font-size: 14px; }
+    nav ul li a:hover { color: white; }
+
+    /* ── MAIN LAYOUT ── */
+    .page-wrapper { display: flex; gap: 24px; padding: 24px; max-width: 1100px; margin: auto; }
+    main { flex: 3; }
+    aside { flex: 1; }
+
+    /* ── SECTION CARDS ── */
+    .card { background: white; border-radius: 10px; padding: 22px; margin-bottom: 20px; border: 1px solid #e0e0e0; }
+    .card h2 { color: #1a1a2e; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #6366f1; font-size: 18px; }
+
+    /* ── RESUME SECTION ── */
+    .resume-item { margin-bottom: 12px; }
+    .resume-item strong { display: block; font-size: 14px; }
+    .resume-item span { font-size: 13px; color: #666; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-tag { background: #EEEDFE; color: #3C3489; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 12px; border: 1px solid #ddd; text-align: center; }
+    thead tr { background: #1a1a2e; color: white; }
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+    .break-cell { background: #FAEEDA; font-weight: bold; color: #633806; }
+    .lab-cell { background: #EAF3DE; color: #27500A; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 5px; color: #444; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #6366f1; }
+    .radio-group { display: flex; gap: 16px; }
+    .radio-group label { font-size: 14px; display: flex; align-items: center; gap: 5px; }
+    .submit-btn { width: 100%; padding: 12px; background: #6366f1; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; }
+    .submit-btn:hover { background: #4f46e5; }
+
+    /* ── SIDEBAR ── */
+    .sidebar-card { background: white; border-radius: 10px; padding: 18px; margin-bottom: 16px; border: 1px solid #e0e0e0; }
+    .sidebar-card h3 { font-size: 15px; color: #1a1a2e; margin-bottom: 10px; }
+    .sidebar-card ul { list-style: none; }
+    .sidebar-card ul li { font-size: 13px; color: #555; padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
+    .sidebar-card ul li:last-child { border-bottom: none; }
+
+    /* ── FOOTER ── */
+    footer { background: #1a1a2e; color: #aaa; text-align: center; padding: 16px; font-size: 13px; }
+
+    /* ── SECTION TABS ── */
+    .tab-btns { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab-btn { padding: 8px 18px; border: 1px solid #6366f1; border-radius: 20px; background: white; color: #6366f1; cursor: pointer; font-size: 13px; }
+    .tab-btn.active { background: #6366f1; color: white; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">FSDL Portfolio</div>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Projects</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+  <main>
+
+    <!-- TABS to switch between sections -->
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="showTab('resume')">Resume / Portfolio</button>
+      <button class="tab-btn" onclick="showTab('timetable')">Timetable</button>
+      <button class="tab-btn" onclick="showTab('form')">Registration Form</button>
+    </div>
+
+    <!-- ══ RESUME / PORTFOLIO (PS 19, 23) ══ -->
+    <div class="tab-content active" id="resume">
+      <div class="card">
+        <h2>About Me</h2>
+        <p style="font-size:14px;color:#555;line-height:1.7">I am a full stack developer student passionate about building web applications using HTML, CSS, JavaScript, and MongoDB.</p>
+      </div>
+      <div class="card">
+        <h2>Education</h2>
+        <div class="resume-item"><strong>Bachelor of Engineering – Computer Science</strong><span>XYZ College of Engineering, 2022–2026</span></div>
+        <div class="resume-item"><strong>HSC – Science</strong><span>ABC Junior College, 2022 — 85%</span></div>
+      </div>
+      <div class="card">
+        <h2>Skills</h2>
+        <div class="skill-tags">
+          <span class="skill-tag">HTML</span><span class="skill-tag">CSS</span>
+          <span class="skill-tag">JavaScript</span><span class="skill-tag">Python</span>
+          <span class="skill-tag">MongoDB</span><span class="skill-tag">Flask</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Projects</h2>
+        <div class="resume-item"><strong>Student Management System</strong><span>Full stack CRUD app using Flask + MongoDB + HTML/CSS/JS</span></div>
+        <div class="resume-item"><strong>Portfolio Website</strong><span>Responsive personal portfolio built with HTML and CSS</span></div>
+      </div>
+      <div class="card">
+        <h2>Contact</h2>
+        <div class="resume-item"><strong>Email:</strong><span>student@email.com</span></div>
+        <div class="resume-item"><strong>Phone:</strong><span>+91 98765 43210</span></div>
+      </div>
+    </div>
+
+    <!-- ══ WEEKLY TIMETABLE (PS 21) ══ -->
+    <div class="tab-content" id="timetable">
+      <div class="card">
+        <h2>Weekly Timetable</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>9:00–10:00</td>
+              <td>Maths</td><td>Physics</td><td>Maths</td><td>Chemistry</td><td>Physics</td>
+            </tr>
+            <tr>
+              <td>10:00–11:00</td>
+              <td>Physics</td><td>Maths</td><td class="lab-cell" rowspan="2">Lab</td><td>Maths</td><td>Chemistry</td>
+            </tr>
+            <tr>
+              <td>11:00–12:00</td>
+              <td>Chemistry</td><td>Chemistry</td><td>Physics</td><td>Maths</td>
+            </tr>
+            <tr>
+              <td>12:00–1:00</td>
+              <td class="break-cell" colspan="5">Lunch Break</td>
+            </tr>
+            <tr>
+              <td>1:00–2:00</td>
+              <td>English</td><td>CS</td><td>English</td><td>CS</td><td>English</td>
+            </tr>
+            <tr>
+              <td>2:00–3:00</td>
+              <td>CS</td><td>English</td><td>CS</td><td>English</td><td class="lab-cell">Lab</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ STUDENT REGISTRATION FORM (PS 20) ══ -->
+    <div class="tab-content" id="form">
+      <div class="card">
+        <h2>Student Registration Form</h2>
+        <form onsubmit="submitForm(event)">
+          <div class="form-group">
+            <label for="fname">Full Name</label>
+            <input type="text" id="fname" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <div class="radio-group">
+              <label><input type="radio" name="gender" value="male"> Male</label>
+              <label><input type="radio" name="gender" value="female"> Female</label>
+              <label><input type="radio" name="gender" value="other"> Other</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="course">Course</label>
+            <select id="course">
+              <option value="">Select course</option>
+              <option>Computer Engineering</option>
+              <option>Information Technology</option>
+              <option>Electronics</option>
+              <option>Mechanical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" rows="3" placeholder="Enter your address"></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Register</button>
+          <div id="form-msg" style="margin-top:10px;font-size:13px;text-align:center;"></div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── SIDEBAR (Blog layout — PS 22) ── -->
+  <aside>
+    <div class="sidebar-card">
+      <h3>Recent Posts</h3>
+      <ul>
+        <li>Intro to HTML5 Semantics</li>
+        <li>CSS Flexbox Guide</li>
+        <li>JavaScript DOM Tutorial</li>
+        <li>MongoDB Basics</li>
+      </ul>
+    </div>
+    <div class="sidebar-card">
+      <h3>Categories</h3>
+      <ul>
+        <li>HTML / CSS</li>
+        <li>JavaScript</li>
+        <li>Python / Flask</li>
+        <li>Database</li>
+      </ul>
+    </div>
+    <div class="sidebar-card">
+      <h3>Contact Info</h3>
+      <ul>
+        <li>📧 student@email.com</li>
+        <li>📞 +91 98765 43210</li>
+        <li>📍 Pune, Maharashtra</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<footer>© 2024 FSDL Student Portfolio — All rights reserved</footer>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    const name = document.getElementById('fname').value.trim();
+    document.getElementById('form-msg').innerHTML = `<span style="color:green">✅ ${name} registered successfully!</span>`;
+    e.target.reset();
+  }
+</script>
+</body>
+</html>

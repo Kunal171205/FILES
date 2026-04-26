@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group H – String Operations</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 30px; display: flex; justify-content: center; }
+    .container { background: white; border-radius: 12px; padding: 30px; width: 100%; max-width: 520px; }
+    h2 { color: #1a1a2e; margin-bottom: 20px; text-align: center; }
+    textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; resize: vertical; min-height: 90px; outline: none; font-family: Arial; }
+    textarea:focus { border-color: #6366f1; }
+    .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+    .op-btn { padding: 11px; border: 1px solid #6366f1; border-radius: 8px; background: white; color: #6366f1; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    .op-btn:hover { background: #6366f1; color: white; }
+    .result-box { background: #f0f2f5; border-radius: 8px; padding: 14px; min-height: 60px; }
+    .result-label { font-size: 11px; font-weight: 500; color: #888; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 6px; }
+    .result-value { font-size: 15px; color: #1a1a2e; word-break: break-all; font-family: monospace; }
+    .stats { display: flex; gap: 10px; margin-top: 14px; }
+    .stat { flex: 1; background: #EEEDFE; border-radius: 8px; padding: 10px; text-align: center; }
+    .stat .num { font-size: 22px; font-weight: bold; color: #3C3489; }
+    .stat .lbl { font-size: 11px; color: #555; margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>String Operations</h2>
+  <textarea id="strInput" placeholder="Type any text here..." oninput="updateStats()"></textarea>
+
+  <div class="btns">
+    <button class="op-btn" onclick="applyOp('reverse')">⟵ Reverse</button>
+    <button class="op-btn" onclick="applyOp('upper')">AA Uppercase</button>
+    <button class="op-btn" onclick="applyOp('lower')">aa Lowercase</button>
+    <button class="op-btn" onclick="applyOp('title')">Aa Title Case</button>
+    <button class="op-btn" onclick="applyOp('trim')">✂ Trim Spaces</button>
+    <button class="op-btn" onclick="applyOp('count')">🔢 Word Count</button>
+  </div>
+
+  <div class="result-box">
+    <div class="result-label">Result</div>
+    <div class="result-value" id="result">Result will appear here...</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="charCount">0</div><div class="lbl">Characters</div></div>
+    <div class="stat"><div class="num" id="wordCount">0</div><div class="lbl">Words</div></div>
+    <div class="stat"><div class="num" id="lineCount">0</div><div class="lbl">Lines</div></div>
+  </div>
+</div>
+
+<script>
+  function getInput() {
+    return document.getElementById('strInput').value;
+  }
+
+  function showResult(text) {
+    document.getElementById('result').textContent = text;
+  }
+
+  function applyOp(op) {
+    const text = getInput();
+    if (!text.trim()) { showResult('Please type something first!'); return; }
+
+    if (op === 'reverse')
+      showResult(text.split('').reverse().join(''));
+
+    else if (op === 'upper')
+      showResult(text.toUpperCase());
+
+    else if (op === 'lower')
+      showResult(text.toLowerCase());
+
+    else if (op === 'title')
+      showResult(text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()));
+
+    else if (op === 'trim')
+      showResult(text.trim());
+
+    else if (op === 'count') {
+      const words = text.trim().split(/\s+/).filter(w => w).length;
+      showResult(`Word count: ${words}`);
+    }
+  }
+
+  function updateStats() {
+    const text = getInput();
+    document.getElementById('charCount').textContent = text.length;
+    document.getElementById('wordCount').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+    document.getElementById('lineCount').textContent = text.split('\n').length;
+  }
+</script>
+</body>
+</html>

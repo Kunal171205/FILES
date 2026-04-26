@@ -1,0 +1,224 @@
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  GROUP J — Full Stack: HTML + JS + Flask + MongoDB       ║
+  ║  PS 29: Student Record Management                        ║
+  ║  PS 30: Event Registration System                        ║
+  ║                                                          ║
+  ║  HOW TO USE:                                             ║
+  ║  1. Run the Flask backend (app.py) first                 ║
+  ║  2. Open this HTML file in browser                       ║
+  ║  3. To change PS: just swap field names in BOTH files    ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group J – Full Stack CRUD</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 30px; }
+    h2 { text-align: center; color: #1a1a2e; margin-bottom: 20px; }
+    .layout { display: flex; gap: 24px; flex-wrap: wrap; }
+    .form-card { background: white; border-radius: 10px; padding: 24px; flex: 1; min-width: 280px; }
+    .table-card { background: white; border-radius: 10px; padding: 24px; flex: 2; min-width: 320px; }
+    h3 { color: #1a1a2e; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #6366f1; }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
+    input:focus, select:focus { border-color: #6366f1; }
+    .submit-btn { width: 100%; padding: 11px; background: #6366f1; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .submit-btn:hover { background: #4f46e5; }
+    #msg { margin-top: 10px; font-size: 13px; text-align: center; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; border: 1px solid #ddd; text-align: left; font-size: 13px; }
+    thead tr { background: #1a1a2e; color: white; }
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+    tbody tr:hover { background: #EEEDFE; }
+    .del-btn { background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
+    .del-btn:hover { background: #dc2626; }
+    .empty-msg { text-align: center; color: #999; padding: 20px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<h2>Student Record Management System</h2>
+<!-- Change h2 title to "Event Registration System" for PS 30 -->
+
+<div class="layout">
+
+  <!-- FORM SECTION -->
+  <div class="form-card">
+    <h3>Add New Record</h3>
+    <form id="mainForm" onsubmit="submitForm(event)">
+
+      <!-- ─── PS 29: Student fields ─── -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required>
+      </div>
+      <div class="form-group">
+        <label for="rollno">Roll Number</label>
+        <input type="text" id="rollno" placeholder="e.g. CS2024001" required>
+      </div>
+      <div class="form-group">
+        <label for="branch">Branch</label>
+        <select id="branch">
+          <option value="">Select branch</option>
+          <option>Computer Engineering</option>
+          <option>Information Technology</option>
+          <option>Electronics</option>
+          <option>Mechanical</option>
+        </select>
+      </div>
+      <!-- ─── For PS 30 replace above 3 with: ───
+        <input id="name" placeholder="Participant Name">
+        <input type="email" id="email" placeholder="Email">
+        <input id="eventname" placeholder="Event Name">
+      ─────────────────────────────────────────── -->
+
+      <button type="submit" class="submit-btn">Submit</button>
+      <div id="msg"></div>
+    </form>
+  </div>
+
+  <!-- TABLE SECTION -->
+  <div class="table-card">
+    <h3>All Records</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Roll No</th>    <!-- Change to "Email" for PS 30 -->
+          <th>Branch</th>     <!-- Change to "Event" for PS 30 -->
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="5" class="empty-msg">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  const BASE = 'http://127.0.0.1:5000';
+
+  // ── LOAD ALL RECORDS ──
+  async function loadRecords() {
+    try {
+      const res = await fetch(`${BASE}/students`);   // Change /students to /events for PS 30
+      const data = await res.json();
+      const tbody = document.getElementById('tableBody');
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">No records found. Add one!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      data.forEach((item, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${item.name}</td>
+            <td>${item.rollno}</td>         <!-- Change to item.email for PS 30 -->
+            <td>${item.branch}</td>         <!-- Change to item.eventname for PS 30 -->
+            <td><button class="del-btn" onclick="deleteRecord('${item._id}')">Delete</button></td>
+          </tr>`;
+      });
+    } catch (err) {
+      document.getElementById('tableBody').innerHTML =
+        '<tr><td colspan="5" class="empty-msg" style="color:red">Cannot connect to server. Is Flask running?</td></tr>';
+    }
+  }
+
+  // ── SUBMIT FORM (POST) ──
+  async function submitForm(event) {
+    event.preventDefault();
+    const msg = document.getElementById('msg');
+
+    const data = {
+      name: document.getElementById('name').value.trim(),
+      rollno: document.getElementById('rollno').value.trim(),   // Change to email for PS 30
+      branch: document.getElementById('branch').value,          // Change to eventname for PS 30
+    };
+
+    if (!data.name || !data.rollno) {
+      msg.innerHTML = "<span style='color:red'>Please fill all fields!</span>";
+      return;
+    }
+
+    await fetch(`${BASE}/students`, {                           // Change /students to /events for PS 30
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    msg.innerHTML = "<span style='color:green'>✅ Record added!</span>";
+    document.getElementById('mainForm').reset();
+    setTimeout(() => { msg.innerHTML = ''; }, 2000);
+    loadRecords();
+  }
+
+  // ── DELETE RECORD ──
+  async function deleteRecord(id) {
+    if (!confirm('Delete this record?')) return;
+    await fetch(`${BASE}/students/${id}`, { method: 'DELETE' }); // Change /students to /events for PS 30
+    loadRecords();
+  }
+
+  loadRecords(); // Load on page open
+</script>
+</body>
+</html>
+
+<!--
+════════════════════════════════════════════════════════════════
+FLASK BACKEND — save this as app.py and run: python app.py
+════════════════════════════════════════════════════════════════
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from pymongo import MongoClient
+from bson import ObjectId
+
+app = Flask(__name__)
+CORS(app)
+
+client = MongoClient("mongodb://localhost:27017/")  # or Atlas URI
+db = client["schooldb"]
+col = db["students"]   # Change to "events" for PS 30
+
+def fmt(doc):
+    doc["_id"] = str(doc["_id"])
+    return doc
+
+@app.route("/students", methods=["GET"])
+def get_all():
+    return jsonify([fmt(d) for d in col.find()]), 200
+
+@app.route("/students", methods=["POST"])
+def create():
+    data = request.json
+    result = col.insert_one(data)
+    data["_id"] = str(result.inserted_id)
+    return jsonify(data), 201
+
+@app.route("/students/<id>", methods=["DELETE"])
+def delete(id):
+    col.delete_one({"_id": ObjectId(id)})
+    return jsonify({"message": "Deleted"}), 200
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+════════════════════════════════════════════════════════════════
+For PS 30 (Event Registration):
+  - Change col = db["events"]
+  - Change /students to /events in all routes
+  - Change fields: name, email, eventname
+════════════════════════════════════════════════════════════════
+-->

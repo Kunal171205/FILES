@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group D – Cards from Data</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 30px; }
+    h2 { text-align: center; margin-bottom: 20px; color: #1a1a2e; }
+    section { background: white; border-radius: 10px; padding: 24px; margin-bottom: 30px; }
+
+    /* PRODUCT CARDS */
+    .cards { display: flex; flex-wrap: wrap; gap: 14px; }
+    .product-card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; width: 160px; text-align: center; }
+    .product-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+    .product-card h3 { font-size: 14px; margin-bottom: 6px; }
+    .product-card .price { color: #6366f1; font-weight: bold; margin-bottom: 10px; }
+    .buy-btn { background: #6366f1; color: white; border: none; border-radius: 5px; padding: 6px 14px; cursor: pointer; font-size: 13px; width: 100%; }
+    .buy-btn:hover { background: #4f46e5; }
+
+    /* SKILL BARS */
+    .skill-item { margin-bottom: 14px; }
+    .skill-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+    .skill-track { background: #eee; border-radius: 20px; height: 12px; overflow: hidden; }
+    .skill-fill { height: 100%; border-radius: 20px; background: linear-gradient(to right, #6366f1, #818cf8); transition: width 1s ease; }
+
+    /* QUIZ */
+    .quiz-box { max-width: 500px; margin: auto; }
+    .question-text { font-size: 16px; font-weight: bold; margin-bottom: 16px; }
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .option-btn { padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; text-align: left; cursor: pointer; background: white; font-size: 14px; }
+    .option-btn:hover { background: #EEEDFE; border-color: #6366f1; }
+    .option-btn.correct { background: #E1F5EE; border-color: #085041; color: #085041; }
+    .option-btn.wrong { background: #FAECE7; border-color: #712B13; color: #712B13; }
+    #quiz-nav { margin-top: 16px; text-align: right; }
+    #next-btn { padding: 9px 20px; background: #6366f1; color: white; border: none; border-radius: 6px; cursor: pointer; display: none; }
+    #score-box { text-align: center; font-size: 20px; font-weight: bold; color: #1a1a2e; display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SECTION 1: PRODUCT GALLERY FROM JSON (PS 6) ══ -->
+<h2>Product Gallery</h2>
+<section>
+  <div class="cards" id="productGallery"></div>
+</section>
+
+<!-- ══ SECTION 2: SKILL BARS (PS 2) ══ -->
+<h2>Skill Bar Component</h2>
+<section id="skillSection"></section>
+
+<!-- ══ SECTION 3: QUIZ APP (PS 16) ══ -->
+<h2>Quiz Application</h2>
+<section>
+  <div class="quiz-box">
+    <div id="quiz-body">
+      <div class="question-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+    </div>
+    <div id="quiz-nav"><button id="next-btn" onclick="nextQuestion()">Next →</button></div>
+    <div id="score-box"></div>
+  </div>
+</section>
+
+<script>
+  // ══════════════════════════════════════
+  // SECTION 1 — PRODUCT GALLERY
+  // ══════════════════════════════════════
+  const products = [
+    { name: 'Wireless Mouse', price: '₹750', img: 'https://picsum.photos/80/80?random=1' },
+    { name: 'Keyboard', price: '₹1,200', img: 'https://picsum.photos/80/80?random=2' },
+    { name: 'Headphones', price: '₹2,500', img: 'https://picsum.photos/80/80?random=3' },
+    { name: 'USB Hub', price: '₹499', img: 'https://picsum.photos/80/80?random=4' },
+  ];
+
+  const gallery = document.getElementById('productGallery');
+  products.forEach(p => {
+    gallery.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <div class="price">${p.price}</div>
+        <button class="buy-btn" onclick="alert('Added ${p.name} to cart!')">Buy Now</button>
+      </div>`;
+  });
+
+  // ══════════════════════════════════════
+  // SECTION 2 — SKILL BARS
+  // ══════════════════════════════════════
+  const skills = [
+    { name: 'HTML', percent: 90 },
+    { name: 'CSS', percent: 80 },
+    { name: 'JavaScript', percent: 70 },
+    { name: 'Python', percent: 85 },
+    { name: 'MongoDB', percent: 65 },
+  ];
+
+  const skillSection = document.getElementById('skillSection');
+  skills.forEach(s => {
+    skillSection.innerHTML += `
+      <div class="skill-item">
+        <div class="skill-header">
+          <span>${s.name}</span>
+          <span>${s.percent}%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: ${s.percent}%"></div>
+        </div>
+      </div>`;
+  });
+
+  // ══════════════════════════════════════
+  // SECTION 3 — QUIZ APP
+  // ══════════════════════════════════════
+  const questions = [
+    { q: 'What does HTML stand for?', options: ['HyperText Markup Language', 'HyperText Making Language', 'High Text Markup Language', 'None'], ans: 0 },
+    { q: 'Which CSS property controls text color?', options: ['background', 'font-color', 'color', 'text-style'], ans: 2 },
+    { q: 'Which method adds item to end of JS array?', options: ['push()', 'pop()', 'shift()', 'add()'], ans: 0 },
+    { q: 'What does DOM stand for?', options: ['Data Object Model', 'Document Object Model', 'Design Object Module', 'None'], ans: 1 },
+  ];
+
+  let current = 0;
+  let score = 0;
+  let answered = false;
+
+  function loadQuestion() {
+    answered = false;
+    document.getElementById('next-btn').style.display = 'none';
+    const q = questions[current];
+    document.getElementById('q-text').textContent = `Q${current + 1}. ${q.q}`;
+    const optDiv = document.getElementById('q-options');
+    optDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      optDiv.innerHTML += `<button class="option-btn" onclick="checkAnswer(${i}, this)">${opt}</button>`;
+    });
+  }
+
+  function checkAnswer(selected, btn) {
+    if (answered) return;
+    answered = true;
+    const correct = questions[current].ans;
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach((b, i) => {
+      if (i === correct) b.classList.add('correct');
+      else if (i === selected) b.classList.add('wrong');
+      b.style.pointerEvents = 'none';
+    });
+    if (selected === correct) score++;
+    document.getElementById('next-btn').style.display = 'inline-block';
+  }
+
+  function nextQuestion() {
+    current++;
+    if (current < questions.length) {
+      loadQuestion();
+    } else {
+      document.getElementById('quiz-body').style.display = 'none';
+      document.getElementById('quiz-nav').style.display = 'none';
+      const scoreBox = document.getElementById('score-box');
+      scoreBox.style.display = 'block';
+      scoreBox.innerHTML = `🎉 Your Score: ${score} / ${questions.length}<br><small style="font-size:14px;font-weight:normal;color:#888">You got ${score * 25}%</small>`;
+    }
+  }
+
+  loadQuestion(); // Start quiz
+</script>
+</body>
+</html>
